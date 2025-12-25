@@ -65,7 +65,15 @@ public interface TStudentAttendanceMapper {
 	 */
 	Boolean update(TStudentAttendance tStudentAttendance);
 
-	//task25編集点:SQLを呼び出すメソッド
+	/**
+	 * 過去日の勤怠未入力件数を取得
+	 *
+	 * @author 中尾隆柊 - Task25
+	 * @param lmsUserId LMSユーザーID
+	 * @param deleteFlg 削除フラグ
+	 * @param trainingDate 現在日付
+	 * @return 過去日の勤怠未入力件数
+	 */
 	Integer notEnterCount(@Param("lmsUserId") Integer lmsUserId,
 			@Param("deleteFlg") Short deleteFlg,
 			@Param("trainingDate") Date trainingDate);

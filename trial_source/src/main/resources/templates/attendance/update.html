@@ -1,10 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+
 <head>
-<meta charset="UTF-8">
-<title>勤怠情報変更｜LMS</title>
+	<meta charset="UTF-8">
+	<title>勤怠情報変更｜LMS</title>
+
+	<style>
+		th.time-col,
+		td.time-col {
+			width: 150px !important;
+			vertical-align: middle;
+		}
+
+		.time-inline {
+			display: inline-flex !important;
+			align-items: center !important;
+			flex-wrap: nowrap !important;
+			white-space: nowrap !important;
+		}
+
+		.time-colon {
+			display: inline-block;
+			width: 10px;
+			text-align: center;
+		}
+	</style>
 </head>
+
 <body>
 
 	<th:block th:if="${session.loginUserDto.role == '0001'}">
@@ -21,49 +43,74 @@
 	<div class="row">
 		<div class="bs-component col-sm-12">
 
-			<form th:action="@{/attendance/update}" method="post">
+			<form th:action="@{/attendance/update}" method="post" id="attendanceUpdateForm">
 				<table class="table table-hover dataTable no-footer">
 					<thead>
 						<tr>
 							<th class="w140">日付</th>
 							<th class="w300">コース内容</th>
-							<th class="w70">出勤</th>
-							<th class="w70">退勤</th>
+							<th class="w70 time-col">出勤</th>
+							<th class="w70 time-col">退勤</th>
 							<th class="w80">中抜け時間</th>
 							<th class="w70">ステータス</th>
 							<th class="w240">備考</th>
 						</tr>
 					</thead>
+
 					<tbody>
 						<th:block th:each="dailyAttendanceForm, stat : *{attendanceForm.attendanceList}">
 							<tr>
 								<th:block>
-									<input type="hidden" th:name="|attendanceList[${stat.index}].isToday|" th:value="${dailyAttendanceForm.isToday}" />
-									<input type="hidden" th:name="|attendanceList[${stat.index}].studentAttendanceId|" th:value="${dailyAttendanceForm.studentAttendanceId}" />
-									<input type="hidden" th:name="|attendanceList[${stat.index}].trainingDate|" th:value="${dailyAttendanceForm.trainingDate}" />
-									<input type="hidden" th:name="|attendanceList[${stat.index}].dispTrainingDate|" th:value="${dailyAttendanceForm.dispTrainingDate}" />
-									<input type="hidden" th:name="|attendanceList[${stat.index}].sectionName|" th:value="${dailyAttendanceForm.sectionName}" />
-									<input type="hidden" th:name="|attendanceList[${stat.index}].statusDispName|" th:value="${dailyAttendanceForm.statusDispName}" />
+									<input type="hidden" th:name="|attendanceList[${stat.index}].isToday|"
+										th:value="${dailyAttendanceForm.isToday}" />
+									<input type="hidden" th:name="|attendanceList[${stat.index}].studentAttendanceId|"
+										th:value="${dailyAttendanceForm.studentAttendanceId}" />
+									<input type="hidden" th:name="|attendanceList[${stat.index}].trainingDate|"
+										th:value="${dailyAttendanceForm.trainingDate}" />
+									<input type="hidden" th:name="|attendanceList[${stat.index}].dispTrainingDate|"
+										th:value="${dailyAttendanceForm.dispTrainingDate}" />
+									<input type="hidden" th:name="|attendanceList[${stat.index}].sectionName|"
+										th:value="${dailyAttendanceForm.sectionName}" />
+									<input type="hidden" th:name="|attendanceList[${stat.index}].statusDispName|"
+										th:value="${dailyAttendanceForm.statusDispName}" />
 								</th:block>
+
 								<td class="w140">[[${dailyAttendanceForm.dispTrainingDate}]]</td>
 								<td class="w300">[[${dailyAttendanceForm.sectionName}]]</td>
-								<td class="w70">
-									<input type="text" th:name="|attendanceList[${stat.index}].trainingStartTime|"
-									th:value="${dailyAttendanceForm.trainingStartTime}" class="form-control" />
+
+								<!-- task26.編集点(中尾隆柊)出勤 -->
+								<td class="w70 time-col">
+									<input type="hidden" th:name="|attendanceList[${stat.index}].trainingStartTime|"
+										th:value="${dailyAttendanceForm.trainingStartTime}" class="js-start-hidden" />
+									<div class="time-inline js-start-ui"
+										th:attr="data-init=${dailyAttendanceForm.trainingStartTime}">
+									</div>
 								</td>
-								<td class="w70">
-									<input type="text" th:name="|attendanceList[${stat.index}].trainingEndTime|"
-									th:value="${dailyAttendanceForm.trainingEndTime}" class="form-control" />
+
+								<!-- task26.編集点(中尾隆柊)退勤 -->
+								<td class="w70 time-col">
+									<input type="hidden" th:name="|attendanceList[${stat.index}].trainingEndTime|"
+										th:value="${dailyAttendanceForm.trainingEndTime}" class="js-end-hidden" />
+									<div class="time-inline js-end-ui"
+										th:attr="data-init=${dailyAttendanceForm.trainingEndTime}">
+									</div>
 								</td>
+
 								<td class="w80">
 									<select th:name="|attendanceList[${stat.index}].blankTime|" class="form-control">
-										<option th:each="blankTime : ${attendanceForm.blankTimes}" th:value="${blankTime.key}" th:inlne="text" class="form-control" 
-											th:selected="${blankTime.key == dailyAttendanceForm.blankTime}">[[${blankTime.value}]]</option>
+										<option th:each="blankTime : ${attendanceForm.blankTimes}"
+											th:value="${blankTime.key}"
+											th:selected="${blankTime.key == dailyAttendanceForm.blankTime}">
+											[[${blankTime.value}]]
+										</option>
 									</select>
 								</td>
+
 								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
+
 								<td class="w240">
-									<input type="text" th:name="|attendanceList[${stat.index}].note|" th:value="${dailyAttendanceForm.note}" class="form-control"></input>
+									<input type="text" th:name="|attendanceList[${stat.index}].note|"
+										th:value="${dailyAttendanceForm.note}" class="form-control" />
 								</td>
 							</tr>
 						</th:block>
@@ -84,5 +131,90 @@
 		</div>
 	</div>
 
+	<!-- task26.編集点(中尾隆柊) -->
+	<script>
+		(() => {
+			const pad2 = (n) => String(n).padStart(2, '0');
+
+			// "hh:mm" → {hh, mm}（未入力は空扱い）
+			const parseTime = (s) => {
+				if (!s) return {hh: '', mm: ''};
+				const m = String(s).match(/^(\d{1,2}):(\d{1,2})$/);
+				if (!m) return {hh: '', mm: ''};
+				return {hh: pad2(m[1]), mm: pad2(m[2])};
+			};
+
+			// select作成（00-23 / 00-59）
+			const buildSelect = (from, to, selected, widthPx) => {
+				const sel = document.createElement('select');
+				sel.className = 'form-control';
+				sel.style.width = widthPx + 'px';
+				sel.style.display = 'inline-block';
+				sel.style.verticalAlign = 'middle';
+				sel.style.paddingLeft = '8px';
+				sel.style.paddingRight = '8px';
+
+				const emptyOpt = document.createElement('option');
+				emptyOpt.value = '';
+				emptyOpt.textContent = '';
+				sel.appendChild(emptyOpt);
+
+				for (let i = from; i <= to; i++) {
+					const v = pad2(i);
+					const opt = document.createElement('option');
+					opt.value = v;
+					opt.textContent = v;
+					if (v === selected) opt.selected = true;
+					sel.appendChild(opt);
+				}
+				return sel;
+			};
+
+			const mountTimeUi = (container, hiddenInput) => {
+				container.style.display = 'inline-flex';
+				container.style.alignItems = 'center';
+				container.style.flexWrap = 'nowrap';
+				container.style.whiteSpace = 'nowrap';
+				container.style.gap = '6px';
+
+				const init = container.getAttribute('data-init') || '';
+				const {hh, mm} = parseTime(init);
+
+				const hhSel = buildSelect(0, 23, hh, 56);
+				const mmSel = buildSelect(0, 59, mm, 56);
+
+				const colon = document.createElement('span');
+				colon.className = 'time-colon';
+				colon.textContent = ':';
+
+				container.appendChild(hhSel);
+				container.appendChild(colon);
+				container.appendChild(mmSel);
+
+				// hidden へ hh:mm を入れる
+				const syncHidden = () => {
+					const h = hhSel.value;
+					const m = mmSel.value;
+					hiddenInput.value = (h && m) ? `${h}:${m}` : '';
+				};
+
+				hhSel.addEventListener('change', syncHidden);
+				mmSel.addEventListener('change', syncHidden);
+				syncHidden();
+			};
+
+			document.querySelectorAll('tr').forEach(row => {
+				const startUi = row.querySelector('.js-start-ui');
+				const startHidden = row.querySelector('.js-start-hidden');
+				if (startUi && startHidden) mountTimeUi(startUi, startHidden);
+
+				const endUi = row.querySelector('.js-end-ui');
+				const endHidden = row.querySelector('.js-end-hidden');
+				if (endUi && endHidden) mountTimeUi(endUi, endHidden);
+			});
+		})();
+	</script>
+
 </body>
+
 </html>

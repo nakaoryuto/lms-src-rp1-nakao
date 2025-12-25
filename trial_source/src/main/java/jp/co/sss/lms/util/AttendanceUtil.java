@@ -147,4 +147,34 @@ public class AttendanceUtil {
 		return false;
 	}
 
+	/**
+	 * 出勤・退勤時間（時）プルダウン用マップを取得
+	 *
+	 * @author 中尾隆柊 – Task.26
+	 * @return 時間マップ（00～23）
+	 */
+	public LinkedHashMap<Integer, String> setHourMap() {
+		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
+		map.put(null, "");
+		for (int h = 0; h <= 23; h++) {
+			map.put(h, String.format("%02d", h));
+		}
+		return map;
+	}
+
+	/**
+	 * 出勤・退勤時間（分）プルダウン用マップを取得
+	 *
+	 * @author 中尾隆柊 – Task.26
+	 * @return 分マップ（00～59）
+	 */
+	public LinkedHashMap<Integer, String> setMinuteMap() {
+		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
+		map.put(null, "");
+		for (int m = 0; m <= 59; m++) {
+			map.put(m, String.format("%02d", m));
+		}
+		return map;
+	}
+
 }

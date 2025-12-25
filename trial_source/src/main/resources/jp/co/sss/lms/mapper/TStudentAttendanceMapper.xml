@@ -103,22 +103,21 @@
 		blank_time = #{blankTime}
 		WHERE student_attendance_id = #{studentAttendanceId}
 	</update>
-	<!--task25編集点:未入力件数取得SQL本体を返す -->
+	<!--task25編集点(中尾隆柊):未入力件数取得SQL本体を返す -->
 	<select id="notEnterCount" resultType="java.lang.Integer">
 		SELECT
 		COUNT(*)
-		FROM t_course_user tcu
-		INNER JOIN m_section ms
-		ON tcu.course_id = ms.course_id
-		LEFT OUTER JOIN t_student_attendance tsa
-		ON tsa.lms_user_id = tcu.lms_user_id
-		AND cast(ms.date AS DATE) = cast(tsa.training_date AS DATE)
-		AND tsa.delete_flg = #{deleteFlg}
+		FROM t_student_attendance
 		WHERE
-		tcu.lms_user_id = #{lmsUserId}
-		AND tcu.delete_flg = #{deleteFlg}
-		AND ms.delete_flg = #{deleteFlg}
-		AND cast(ms.date AS DATE) &lt; cast(#{trainingDate} AS DATE)
-		AND (tsa.student_attendance_id IS NULL OR tsa.training_start_time = '')
+		lms_user_id = #{lmsUserId}
+		AND delete_flg = #{deleteFlg}
+		AND training_date &lt; #{trainingDate}
+		AND status != 1
+		AND (
+		training_start_time = ''
+		OR training_end_time = ''
+		OR training_start_time IS NULL
+		OR training_end_time IS NULL
+		)
 	</select>
 </mapper>

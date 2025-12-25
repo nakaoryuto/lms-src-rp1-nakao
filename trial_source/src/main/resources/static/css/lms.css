@@ -1,6 +1,7 @@
 @charset "utf-8";
 
-table form, .ib {
+table form,
+.ib {
 	display: inline-block;
 }
 
@@ -113,7 +114,8 @@ div.tab-panel-div {
 /*------------------------------------------
    Sticky footer styles
 --------------------------------------------*/
-html, body {
+html,
+body {
 	height: 100%;
 }
 
@@ -124,7 +126,8 @@ html, body {
 	margin: 0 auto -60px;
 }
 
-#push, #footer {
+#push,
+#footer {
 	height: 60px;
 }
 
@@ -1215,7 +1218,7 @@ html, body {
 /* FONT-SIZE */
 .fs10 {
 	font-size: 83.3%;
-	
+
 }
 
 .fs11 {
@@ -1703,4 +1706,26 @@ html, body {
 .well.bs-component.subsidyCustom {
 	float: left;
 	width: 50%;
+
+	/* Task.26編集点(中尾隆柊): 出勤/退勤 hh:mm を横一列で表示 */
+	.time-inline {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		/* 09 [gap] : [gap] 00 の間隔 */
+		white-space: nowrap;
+		/* 折り返し防止 */
+	}
+
+	.time-inline .time-select {
+		width: 64px;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+
+	.time-inline .time-colon {
+		display: inline-block;
+		width: 10px;
+		text-align: center;
+	}
 }

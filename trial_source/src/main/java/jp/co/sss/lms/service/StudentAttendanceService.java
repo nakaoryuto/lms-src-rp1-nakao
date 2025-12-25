@@ -335,21 +335,23 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 
-	//task25編集点:①時分秒のない日付を取得・②APIを呼び出し過去日の未入力数をカウント・③取得した未入力カウント数が0より大きいかチェックする
-	public Integer notEnterCount() {
+	/**
+	 * 過去日の勤怠未入力件数を取得
+	 *
+	 * @return 過去日の勤怠未入力件数
+	 * @author 中尾隆柊 – Task.25
+	 */
+	public Integer notEnterCount() throws ParseException {
 
 		// ① SimpleDateFormatで時分秒のない日付を取得
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date trainingDate = null;
-		try {
-			trainingDate = sdf.parse(sdf.format(new Date()));
-		} catch (ParseException e) {
-			return 0;
-		}
+		Date trainingDate = sdf.parse(sdf.format(new Date()));
 
 		// ② API(SQL)を呼び出し過去日の未入力数をカウント
 		Integer notEnterCount = tStudentAttendanceMapper.notEnterCount(
-				loginUserDto.getLmsUserId(), Constants.DB_FLG_FALSE, trainingDate);
+				loginUserDto.getLmsUserId(),
+				Constants.DB_FLG_FALSE,
+				trainingDate);
 
 		// null対策
 		if (notEnterCount == null) {
@@ -359,4 +361,56 @@ public class StudentAttendanceService {
 		return notEnterCount;
 	}
 
+	/**
+	 * 勤怠時刻文字列(hh:mm)を作成
+	 *
+	 * @author 中尾隆柊 – Task.26
+	 * @param hour   時
+	 * @param minute 分
+	 * @return hh:mm形式の時刻文字列（未選択の場合は空文字）
+	 */
+	private String buildTimeString(Integer hour, Integer minute) {
+		if (hour == null || minute == null) {
+			return "";
+		}
+		return String.format("%02d:%02d", hour, minute);
+	}
+
+	/**
+	 * 既存の時刻文字列(HH:mm)から、時・分をフォームに設定
+	 *
+	 * @author 中尾隆柊 – Task.26
+	 * @param dailyAttendanceForm 日次勤怠フォーム
+	 */
+	private void setTimeParts(DailyAttendanceForm dailyAttendanceForm) {
+		String start = dailyAttendanceForm.getTrainingStartTime();
+		if (start != null && !start.isEmpty() && start.contains(":")) {
+			String[] parts = start.split(":");
+			if (parts.length >= 2) {
+				try {
+					dailyAttendanceForm.setTrainingStartHour(Integer.parseInt(parts[0]));
+					dailyAttendanceForm.setTrainingStartMinute(Integer.parseInt(parts[1]));
+				} catch (NumberFormatException e) {
+					// 画面表示優先（不正値は未選択扱い）
+					dailyAttendanceForm.setTrainingStartHour(null);
+					dailyAttendanceForm.setTrainingStartMinute(null);
+				}
+			}
+		}
+
+		String end = dailyAttendanceForm.getTrainingEndTime();
+		if (end != null && !end.isEmpty() && end.contains(":")) {
+			String[] parts = end.split(":");
+			if (parts.length >= 2) {
+				try {
+					dailyAttendanceForm.setTrainingEndHour(Integer.parseInt(parts[0]));
+					dailyAttendanceForm.setTrainingEndMinute(Integer.parseInt(parts[1]));
+				} catch (NumberFormatException e) {
+					// 画面表示優先（不正値は未選択扱い）
+					dailyAttendanceForm.setTrainingEndHour(null);
+					dailyAttendanceForm.setTrainingEndMinute(null);
+				}
+			}
+		}
+	}
 }

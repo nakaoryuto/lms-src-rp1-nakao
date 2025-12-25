@@ -88,12 +88,10 @@
 			const minutes = ('0' + today.getMinutes()).slice(-2);
 			return hours + ':' + minutes;
 		}
-		//task25編集点:過去日未入力確認ダイアログを表示
+		//task25編集点（中尾隆柊）:過去日未入力確認ダイアログを表示
 		const existsNotEnter = /*[[${existsNotEnter}]]*/ false;
-		const notEnterCount = /*[[${notEnterCount}]]*/ 0;
 
 		if (existsNotEnter) {
-			const title = '過去日未入力確認';
 			const message = '過去日の勤怠に未入力があります。'
 			if (typeof bootbox !== 'undefined') {
 				bootbox.alert({
