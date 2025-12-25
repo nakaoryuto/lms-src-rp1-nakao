@@ -215,6 +215,25 @@
 		})();
 	</script>
 
+	<script>
+		// Task.27編集点(中尾隆柊)：更新確認ダイアログ
+		(() => {
+			const form = document.getElementById('attendanceUpdateForm');
+			const updateBtn = document.getElementById('btnUpdate');
+
+			if (!form || !updateBtn) return;
+
+			updateBtn.addEventListener('click', function (e) {
+				e.preventDefault();
+
+				const result = window.confirm('勤怠情報を更新します。よろしいですか？');
+				if (result) {
+					form.submit();
+				}
+			});
+		})();
+	</script>
+
 </body>
 
 </html>
